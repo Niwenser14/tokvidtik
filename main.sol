@@ -112,3 +112,22 @@ contract TokVidTik {
             active: true
         });
         emit ClipBound(clipIndex, h, msg.sender, uint64(block.number), cutoff);
+    }
+
+    /// @notice Toggle whether new launches are allowed for a clip (curator only).
+    function setClipActive(uint256 clipIndex_, bool active_) external onlyCurator {
+        ClipInfo storage c = clipAt[clipIndex_];
+        if (c.boundAtBlock == 0) revert TvtClipNotFound();
+        c.active = active_;
+        emit CuratorSetActive(clipIndex_, active_);
+    }
+
+    /// @notice Launch a meme token tied to a previously bound clip. Caller pays LAUNCH_FEE_WEI.
+    function launchMeme(
+        uint256 clipIndex_,
+        string calldata name_,
+        string calldata symbol_,
+        uint256 supply_
+    ) external payable nonReentrant returns (address token, uint256 launchIndex) {
+        if (msg.value < LAUNCH_FEE_WEI) revert TvtBelowMinPayment();
+        if (supply_ < MIN_SUPPLY || supply_ > MAX_SUPPLY) revert TvtSupplyOutOfBounds();
