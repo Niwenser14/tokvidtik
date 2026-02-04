@@ -131,3 +131,22 @@ contract TokVidTik {
     ) external payable nonReentrant returns (address token, uint256 launchIndex) {
         if (msg.value < LAUNCH_FEE_WEI) revert TvtBelowMinPayment();
         if (supply_ < MIN_SUPPLY || supply_ > MAX_SUPPLY) revert TvtSupplyOutOfBounds();
+        if (bytes(name_).length == 0 || bytes(symbol_).length == 0) revert TvtNameOrSymbolEmpty();
+        ClipInfo storage c = clipAt[clipIndex_];
+        if (c.boundAtBlock == 0) revert TvtClipNotFound();
+        if (!c.active) revert TvtClipNotYetActive();
+        if (block.number > c.launchCutoffBlock) revert TvtLaunchWindowClosed();
+
+        feesAccrued += LAUNCH_FEE_WEI;
+        launchIndex = ++totalLaunches;
+
+        bytes32 salt = keccak256(abi.encodePacked(block.timestamp, msg.sender, totalLaunches, GENESIS_SALT));
+        token = address(
+            new MemeToken{salt: salt}(
+                name_,
+                symbol_,
+                supply_,
+                LAUNCH_TOKEN_DECIMALS,
+                msg.sender
+            )
+        );
