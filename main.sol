@@ -93,3 +93,22 @@ contract TokVidTik {
             )
         );
     }
+
+    /// @notice Bind a short-form video clip (e.g. TikTok ID) so meme launches can reference it.
+    /// @param clipIdUtf8 UTF-8 bytes for the clip identifier (video ID or content hash reference).
+    function bindClip(bytes calldata clipIdUtf8) external onlyCurator nonReentrant returns (uint256 clipIndex) {
+        if (clipIdUtf8.length == 0) revert TvtClipIdEmpty();
+        if (clipIdUtf8.length > MAX_CLIP_ID_BYTES) revert TvtClipIdTooLong();
+        bytes32 h = keccak256(abi.encodePacked(clipIdUtf8, GENESIS_SALT));
+        if (clipHashToIndex[h] != 0) revert TvtClipAlreadyBound();
+        clipIndex = ++totalClips;
+        clipHashToIndex[h] = clipIndex;
+        uint64 cutoff = uint64(block.number + LAUNCH_WINDOW_BLOCKS);
+        clipAt[clipIndex] = ClipInfo({
+            clipHash: h,
+            boundBy: msg.sender,
+            boundAtBlock: uint64(block.number),
+            launchCutoffBlock: cutoff,
+            active: true
+        });
+        emit ClipBound(clipIndex, h, msg.sender, uint64(block.number), cutoff);
