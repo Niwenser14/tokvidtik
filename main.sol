@@ -55,3 +55,22 @@ contract TokVidTik {
 
     uint256 public totalClips;
     uint256 public totalLaunches;
+    uint256 public feesAccrued;
+
+    mapping(uint256 => ClipInfo) public clipAt;
+    mapping(bytes32 => uint256) public clipHashToIndex;
+    mapping(uint256 => LaunchRecord) public launchAt;
+    mapping(uint256 => address) public launchIndexToToken;
+
+    event ClipBound(uint256 indexed clipIndex, bytes32 indexed clipHash, address boundBy, uint64 boundAtBlock, uint64 launchCutoffBlock);
+    event MemeLaunched(uint256 indexed launchIndex, uint256 indexed clipIndex, address indexed token, address launcher, uint256 supply, uint64 blockNum);
+    event FeesWithdrawn(address indexed to, uint256 amount);
+    event CuratorSetActive(uint256 indexed clipIndex, bool active);
+
+    modifier onlyCurator() {
+        if (msg.sender != curator) revert TvtCuratorOnly();
+        _;
+    }
+
+    modifier nonReentrant() {
+        if (_locked != 1) revert TvtReentrant();
