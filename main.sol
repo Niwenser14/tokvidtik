@@ -150,3 +150,22 @@ contract TokVidTik {
                 msg.sender
             )
         );
+
+        launchAt[launchIndex] = LaunchRecord({
+            clipIndex: uint128(clipIndex_),
+            token: token,
+            launcher: msg.sender,
+            supply: supply_,
+            launchedAtBlock: uint64(block.number)
+        });
+        launchIndexToToken[launchIndex] = token;
+
+        emit MemeLaunched(launchIndex, clipIndex_, token, msg.sender, supply_, uint64(block.number));
+
+        uint256 refund = msg.value - LAUNCH_FEE_WEI;
+        if (refund > 0) {
+            (bool ok,) = msg.sender.call{value: refund}("");
+            require(ok, "Tvt: refund failed");
+        }
+    }
+
