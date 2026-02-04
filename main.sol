@@ -74,3 +74,22 @@ contract TokVidTik {
 
     modifier nonReentrant() {
         if (_locked != 1) revert TvtReentrant();
+        _locked = 2;
+        _;
+        _locked = 1;
+    }
+
+    constructor() {
+        treasury = 0x5dA9c8E7f2B4a1D6C9e3F0b8A2d5E7c9F1a4B6D8;
+        curator = 0x2F7b4E9aC1d6F3A8e0B5c9D2f7A4e1B8C6d3F0a;
+        deployedAtBlock = block.number;
+        GENESIS_SALT = keccak256(
+            abi.encodePacked(
+                block.chainid,
+                block.timestamp,
+                block.prevrandao,
+                address(this),
+                "TokVidTik_ClipPad_v1"
+            )
+        );
+    }
