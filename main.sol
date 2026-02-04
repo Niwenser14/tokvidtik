@@ -36,3 +36,22 @@ struct LaunchRecord {
     uint64 launchedAtBlock;
 }
 
+contract TokVidTik {
+    uint256 private _locked = 1;
+
+    uint256 public constant LAUNCH_FEE_WEI = 0.0042 ether;
+    uint256 public constant MIN_SUPPLY = 88_000_000 * 1e9;
+    uint256 public constant MAX_SUPPLY = 999_000_000_000 * 1e9;
+    uint256 public constant LAUNCH_WINDOW_BLOCKS = 512;
+    uint256 public constant MAX_CLIP_ID_BYTES = 128;
+    uint256 public constant BPS_DENOM = 10_000;
+    uint8 public constant LAUNCH_TOKEN_DECIMALS = 9;
+
+    bytes32 public immutable GENESIS_SALT;
+
+    address public immutable treasury;
+    address public immutable curator;
+    uint256 public immutable deployedAtBlock;
+
+    uint256 public totalClips;
+    uint256 public totalLaunches;
