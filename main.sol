@@ -17,3 +17,22 @@ error TvtZeroAddress();
 error TvtReentrant();
 error TvtNoFeesToPull();
 error TvtTreasuryOnly();
+error TvtLaunchWindowClosed();
+error TvtClipNotYetActive();
+
+struct ClipInfo {
+    bytes32 clipHash;
+    address boundBy;
+    uint64 boundAtBlock;
+    uint64 launchCutoffBlock;
+    bool active;
+}
+
+struct LaunchRecord {
+    uint128 clipIndex;
+    address token;
+    address launcher;
+    uint256 supply;
+    uint64 launchedAtBlock;
+}
+
