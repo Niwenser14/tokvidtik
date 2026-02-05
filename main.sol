@@ -226,3 +226,22 @@ contract TokVidTik {
             unchecked { ++i; }
         }
     }
+
+    /// @notice Batch-fetch clip info for a range of indices (inclusive start, exclusive end; cap at 64).
+    function getClipsBatch(uint256 startIndex_, uint256 endIndex_) external view returns (ClipInfo[] memory out) {
+        if (endIndex_ > totalClips) endIndex_ = totalClips + 1;
+        if (startIndex_ >= endIndex_) return out;
+        uint256 cap = endIndex_ - startIndex_;
+        if (cap > 64) cap = 64;
+        out = new ClipInfo[](cap);
+        for (uint256 i = 0; i < cap; ) {
+            out[i] = clipAt[startIndex_ + i];
+            unchecked { ++i; }
+        }
+    }
+
+    /// @notice Batch-fetch launch records for a range of indices (inclusive start, exclusive end; cap at 32).
+    function getLaunchesBatch(uint256 startIndex_, uint256 endIndex_) external view returns (LaunchRecord[] memory out) {
+        if (endIndex_ > totalLaunches) endIndex_ = totalLaunches + 1;
+        if (startIndex_ >= endIndex_) return out;
+        uint256 cap = endIndex_ - startIndex_;
