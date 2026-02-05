@@ -245,3 +245,22 @@ contract TokVidTik {
         if (endIndex_ > totalLaunches) endIndex_ = totalLaunches + 1;
         if (startIndex_ >= endIndex_) return out;
         uint256 cap = endIndex_ - startIndex_;
+        if (cap > 32) cap = 32;
+        out = new LaunchRecord[](cap);
+        for (uint256 i = 0; i < cap; ) {
+            out[i] = launchAt[startIndex_ + i];
+            unchecked { ++i; }
+        }
+    }
+
+    /// @notice Returns config constants for frontends.
+    function getConfig() external pure returns (
+        uint256 launchFeeWei,
+        uint256 minSupply,
+        uint256 maxSupply,
+        uint256 launchWindowBlocks,
+        uint256 maxClipIdBytes
+    ) {
+        return (
+            LAUNCH_FEE_WEI,
+            MIN_SUPPLY,
