@@ -283,3 +283,22 @@ contract MemeToken {
     mapping(address => uint256) public balanceOf;
     mapping(address => mapping(address => uint256)) public allowance;
 
+    address public immutable minter;
+
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Approval(address indexed owner, address indexed spender, uint256 value);
+
+    constructor(
+        string memory name_,
+        string memory symbol_,
+        uint256 supply_,
+        uint8 decimals_,
+        address minter_
+    ) {
+        name = name_;
+        symbol = symbol_;
+        decimals = decimals_;
+        minter = minter_;
+        totalSupply = supply_;
+        balanceOf[minter_] = supply_;
+        emit Transfer(address(0), minter_, supply_);
