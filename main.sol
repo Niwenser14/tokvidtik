@@ -264,3 +264,22 @@ contract TokVidTik {
         return (
             LAUNCH_FEE_WEI,
             MIN_SUPPLY,
+            MAX_SUPPLY,
+            LAUNCH_WINDOW_BLOCKS,
+            MAX_CLIP_ID_BYTES
+        );
+    }
+
+    receive() external payable {
+        revert TvtBelowMinPayment();
+    }
+}
+
+contract MemeToken {
+    string public name;
+    string public symbol;
+    uint8 public decimals;
+    uint256 public totalSupply;
+    mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
+
