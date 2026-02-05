@@ -207,3 +207,22 @@ contract TokVidTik {
             if (launchAt[i].clipIndex == clipIndex_) count++;
             unchecked { ++i; }
         }
+    }
+
+    /// @notice Fetch launch indices for a clip (bounded by maxReturn).
+    function launchIndicesForClip(uint256 clipIndex_, uint256 maxReturn) external view returns (uint256[] memory indices) {
+        uint256 n = 0;
+        for (uint256 i = 1; i <= totalLaunches && n < maxReturn; ) {
+            if (launchAt[i].clipIndex == clipIndex_) n++;
+            unchecked { ++i; }
+        }
+        indices = new uint256[](n);
+        uint256 j = 0;
+        for (uint256 i = 1; i <= totalLaunches && j < n; ) {
+            if (launchAt[i].clipIndex == clipIndex_) {
+                indices[j] = i;
+                j++;
+            }
+            unchecked { ++i; }
+        }
+    }
