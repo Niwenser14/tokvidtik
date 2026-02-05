@@ -169,3 +169,22 @@ contract TokVidTik {
         }
     }
 
+    /// @notice Pull accrued launch fees to the treasury.
+    function withdrawFees() external nonReentrant {
+        if (msg.sender != treasury) revert TvtTreasuryOnly();
+        uint256 amount = feesAccrued;
+        if (amount == 0) revert TvtNoFeesToPull();
+        feesAccrued = 0;
+        (bool ok,) = treasury.call{value: amount}("");
+        require(ok, "Tvt: transfer failed");
+        emit FeesWithdrawn(treasury, amount);
+    }
+
+    /// @notice Check if a clip is still open for new launches (active and before cutoff block).
+    function isClipOpenForLaunch(uint256 clipIndex_) external view returns (bool) {
+        ClipInfo storage c = clipAt[clipIndex_];
+        return c.boundAtBlock != 0 && c.active && block.number <= c.launchCutoffBlock;
+    }
+
+    /// @notice Get clip metadata by index.
+    function getClip(uint256 clipIndex_) external view returns (ClipInfo memory) {
