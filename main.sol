@@ -188,3 +188,22 @@ contract TokVidTik {
 
     /// @notice Get clip metadata by index.
     function getClip(uint256 clipIndex_) external view returns (ClipInfo memory) {
+        return clipAt[clipIndex_];
+    }
+
+    /// @notice Get launch metadata by index.
+    function getLaunch(uint256 launchIndex_) external view returns (LaunchRecord memory) {
+        return launchAt[launchIndex_];
+    }
+
+    /// @notice Resolve token address for a launch index.
+    function tokenByLaunch(uint256 launchIndex_) external view returns (address) {
+        return launchIndexToToken[launchIndex_];
+    }
+
+    /// @notice Number of launches tied to a given clip.
+    function launchCountForClip(uint256 clipIndex_) external view returns (uint256 count) {
+        for (uint256 i = 1; i <= totalLaunches; ) {
+            if (launchAt[i].clipIndex == clipIndex_) count++;
+            unchecked { ++i; }
+        }
