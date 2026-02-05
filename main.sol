@@ -321,3 +321,15 @@ contract MemeToken {
             require(allowed >= amount, "MemeToken: allowance");
             allowance[from][msg.sender] = allowed - amount;
         }
+        _transfer(from, to, amount);
+        return true;
+    }
+
+    function _transfer(address from, address to, uint256 amount) private {
+        require(to != address(0), "MemeToken: zero address");
+        require(balanceOf[from] >= amount, "MemeToken: balance");
+        balanceOf[from] -= amount;
+        balanceOf[to] += amount;
+        emit Transfer(from, to, amount);
+    }
+}
